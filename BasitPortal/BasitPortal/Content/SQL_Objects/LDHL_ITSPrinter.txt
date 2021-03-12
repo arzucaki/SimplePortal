@@ -1,0 +1,27 @@
+﻿CREATE TABLE [dbo].[LDHL_ITSPrinter](
+	[PrinterId] [int] IDENTITY(1,1) NOT NULL,
+	[PrinterName] [nvarchar](50) NOT NULL,
+	[PrinterIP] [nvarchar](16) NULL,
+	[CreatedDatetime] [datetime] NOT NULL,
+	[CreatedUserId] [int] NOT NULL,
+	[ModifiedDatetime] [datetime] NULL,
+	[ModifiedUserId] [int] NULL,
+	[IsActive] [bit] NOT NULL,
+ CONSTRAINT [PK_LDHL_ITSPrinter] PRIMARY KEY CLUSTERED 
+(
+	[PrinterId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+ALTER TABLE [dbo].[LDHL_ITSPrinter] ADD  CONSTRAINT [DF_LDHL_ITSPrinter_CreatedDatetime]  DEFAULT (getdate()) FOR [CreatedDatetime]
+GO
+
+ALTER TABLE [dbo].[LDHL_ITSPrinter] ADD  CONSTRAINT [DF_LDHL_ITSPrinter_CreatedUserId]  DEFAULT ((0)) FOR [CreatedUserId]
+GO
+
+ALTER TABLE [dbo].[LDHL_ITSPrinter] ADD  CONSTRAINT [DF_LDHL_ITSPrinter_IsActive]  DEFAULT ((0)) FOR [IsActive]
+GO
+
+

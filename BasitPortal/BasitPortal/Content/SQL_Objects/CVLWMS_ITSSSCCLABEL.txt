@@ -1,0 +1,24 @@
+﻿ALTER VIEW [dbo].[CVLWMS_ITSSSCCLABEL] as
+ SELECT DISTINCT
+                WAOR_ID, WAOR_CODE ord_Code, 
+             LEFT(CUSTOMER, 25) orc_FullName, 
+             SUBSTRING(CUSTOMER, 26, LEN(CUSTOMER)) orc_FullName1,
+             LEFT(CUSTOMER, 25) orr_FullName,
+             SUBSTRING(CUSTOMER, 26, LEN(CUSTOMER)) orr_FullName1, 
+       
+             ADRESS orr_Address, ADRESS orr_City, ADRESS Porr_City,
+             CONVERT(varchar,getdate(),104) +' '+    CONVERT(varchar,getdate(),108) PRINT_DATE,
+                    '' SSCC,
+                    SLPA_PACKCODE,
+                    WAOR_CUSTOMEREFCODE as RGNCOD --Bölge bilgisi eklendi (AMBAR vs) - Can Mert Sağlam - 26.12.2017
+			FROM 
+             LWMS_WAREHOUSEORDER WAOR_ (NOLOCK) 
+              LEFT JOIN CVLDHL_ORDERADDRESSINFO ON WAOR_CODE= ord_Code
+             INNER JOIN VLDHL_SERIALLISTPACK ON SLPA_WAREHOUSEORDERID= WAOR_CODE
+
+
+
+
+GO
+
+

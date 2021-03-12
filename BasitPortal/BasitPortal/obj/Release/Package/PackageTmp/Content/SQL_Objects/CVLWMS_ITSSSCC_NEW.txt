@@ -1,0 +1,31 @@
+﻿ALTER VIEW [dbo].[CVLWMS_ITSSSCC_NEW] AS 
+
+--ord_Code, orc_FullName, orr_FullName, @SSCC SSCC, orr_Address, orr_Area, orr_City                                             
+    SELECT 
+       (SELECT CONVERT(VARCHAR, [CODE])+ CONVERT(VARCHAR,[GLN_CODE])+ RIGHT('00000000000000' +
+CONVERT(VARCHAR, [SEQUENCE]), 15)  FROM LDHL_ITSMIXBIXSSCC)AS SSCC,
+             WAOR_ID, WAOR_CODE ord_Code, 
+             [dbo].[translateturkishchars](LEFT(waor_notes, 40)) orc_FullName, 
+              [dbo].[translateturkishchars](SUBSTRING(waor_notes, 41, LEN(waor_notes))) orc_FullName1,
+              [dbo].[translateturkishchars](LEFT(waor_notes, 40)) orr_FullName,
+              [dbo].[translateturkishchars](SUBSTRING(waor_notes, 41, LEN(waor_notes))) orr_FullName1, 
+       
+              [dbo].[translateturkishchars](ADRESS) orr_Address,  [dbo].[translateturkishchars](ADRESS) orr_City,  [dbo].[translateturkishchars](ADRESS) Porr_City,
+             CONVERT(varchar, getdate()+1,104) PRINT_DATE, --Saat Bilgisi Çıkartıldı - Can Mert Sağlam - 14.03.2018
+			 WAOR_CUSTOMEREFCODE as RGNCOD --Bölge bilgisi eklendi (AMBAR vs) - Can Mert Sağlam - 26.12.2017
+			
+    FROM 
+             LWMS_WAREHOUSEORDER WAOR_ (NOLOCK) 
+			 LEFT JOIN CVLDHL_ORDERADDRESSINFO ON WAOR_CODE= ord_Code
+             --INNER JOIN LENT_CUSTOMER CUST_ (NOLOCK)ON CUST_.CUST_ID = WAOR_.WAOR_CUSTOMERID
+             --INNER JOIN LENT_PARTY PRTY_ (NOLOCK)ON PRTY_.PRTY_ID = CUST_.CUST_PARTYID
+             --INNER JOIN LENT_PARTYADDRESS PAAD_ (NOLOCK) ON PAAD_.PAAD_PARTYID = PRTY_ID
+             --LEFT JOIN LENT_CITY CITY_ (NOLOCK) ON CITY_.CITY_ID = PAAD_.PAAD_CITYID
+where WAOR_ORDERDATE > GETDATE() - 7
+--and WAOR_CODE='adrtest'
+
+
+
+GO
+
+
