@@ -68,10 +68,11 @@
                         </div>
                     </td>
                     <td class="auto-style6">
-                        <asp:CheckBox ID="cbConfirmed" runat="server" Text="Onaylananları getir." AutoPostBack="True" />
+                        <br />
+                        <asp:CheckBox ID="cbConfirmed" runat="server" AutoPostBack="True" Text="Onaylananları getir." />
                         <asp:Button ID="btnList" class="btn btn-lg btn-primary btn-block" type="submit" runat="server" Text="Listele" Height="49px"  Width="178px" OnClick="btnList_Click" />
                         <asp:Button ID="btnConfirm" class="btn btn-lg btn-primary btn-block" type="submit" runat="server" Text="Onayla" Height="49px"  Width="178px" BorderStyle="None" OnClick="btnConfirm_Click" />
-                        <asp:Button ID="btnConfirm2" Visible="false" runat="server" BorderStyle="None" class="btn btn-lg btn-primary btn-block" Height="49px" Text="F Onayı Ver" type="submit" Width="178px" OnClick="btnConfirm2_Click" />
+                        <asp:Button ID="btnBarcode" Visible="false" runat="server" BorderStyle="None" class="btn btn-lg btn-primary btn-block" Height="49px" Text="Barkod" type="submit" Width="178px" OnClick="btnBarcode_Click" />
                     </td>
                     <td style="width: 665px">
                         &nbsp;</td>
@@ -82,7 +83,7 @@
                     </td>
                     <td class="auto-style2" style="width: 965px">&nbsp;&nbsp;<asp:Label ID="lblQantity" runat="server" Font-Bold="True" Font-Size="Small"></asp:Label> &nbsp;
                         <asp:CheckBox ID="cbSelectAll" Text="Tümünü Seç" runat="server" OnCheckedChanged="cbSelectAll_CheckedChanged" AutoPostBack="True" />
-                        <asp:GridView ID="gvInventory" runat="server" Width="1100px" CellPadding="4" ForeColor="#333333" GridLines="None" AutoGenerateColumns="False">
+                        <asp:GridView ID="gvInventory" runat="server" Width="1100px" CellPadding="5" ForeColor="#333333" GridLines="None" AutoGenerateColumns="False">
                             <AlternatingRowStyle BackColor="White" />
                             <Columns>
                              

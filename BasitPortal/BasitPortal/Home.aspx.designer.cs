@@ -157,13 +157,13 @@ namespace BasitPortal {
         protected global::System.Web.UI.WebControls.Button btnConfirm;
         
         /// <summary>
-        /// btnConfirm2 control.
+        /// btnBarcode control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnConfirm2;
+        protected global::System.Web.UI.WebControls.Button btnBarcode;
         
         /// <summary>
         /// lblQantity control.

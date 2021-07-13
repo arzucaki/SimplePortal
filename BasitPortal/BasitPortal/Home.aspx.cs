@@ -82,11 +82,11 @@ namespace BasitPortal
                 cdate.Visible = false;
                 if (wh_id=="BOE1")
                 {
-                    btnConfirm2.Visible = true;
+                    btnBarcode.Visible = true;
                 }
                 else
                 {
-                    btnConfirm2.Visible = false;
+                    btnBarcode.Visible = false;
                 }
             }
             else if (systype == "JDA" && !cbConfirmed.Checked)
@@ -104,11 +104,11 @@ namespace BasitPortal
                 cdate.Visible = true;
                 if (wh_id == "BOE1")
                 {
-                    btnConfirm2.Visible = true;
+                    btnBarcode.Visible = true;
                 }
                 else
                 {
-                    btnConfirm2.Visible = false;
+                    btnBarcode.Visible = false;
                 }
             }
             if (!Page.IsPostBack)
@@ -161,11 +161,11 @@ namespace BasitPortal
                     cdate.Visible = false;
                     if (wh_id == "BOE1")
                     {
-                        btnConfirm2.Visible = true;
+                        btnBarcode.Visible = true;
                     }
                     else
                     {
-                        btnConfirm2.Visible = false;
+                        btnBarcode.Visible = false;
                     }
                 }
                 else if (systype == "JDA" && !cbConfirmed.Checked)
@@ -183,17 +183,15 @@ namespace BasitPortal
                     cdate.Visible = true;
                     if (wh_id == "BOE1")
                     {
-                        btnConfirm2.Visible = true;
+                        btnBarcode.Visible = true;
                     }
                     else
                     {
-                        btnConfirm2.Visible = false;
+                        btnBarcode.Visible = false;
                     }
                 }
             }
         }
-
-  
 
         public void getList() {
             if (txtPO.Text != string.Empty && wh_id != "TR_0126_02")
@@ -528,20 +526,44 @@ namespace BasitPortal
                 {
                     if (chk.Checked)
                     {
-                        po = item.Cells[6].Text.Replace("&nbsp;", "").Substring(item.Cells[6].Text.Length - 6)+ "_" + txtlot.Text;
-                        confirmDate = DateTime.Now.AddHours(-2).ToString("yyyyMMdd HHmm");
-                        confirmUser = Request.QueryString["User"];
-                        dtlnum = item.Cells[5].Text;
-                        command = "statuschange";
-
                         if (wh_id=="BOE1")
                         {
-                            toStatus = "F";
+                            string statu = item.Cells[7].Text;
+                            if (statu == "Q-010R")
+                            {
+                                lblError.Text = statu + " Barkodlanmamış bir ürüne onay vermeye çalışıyorsunuz!";
+                            }
+                            else if (statu == "Q-010F")
+                            {
+                                po = item.Cells[6].Text.Replace("&nbsp;", "").Substring(item.Cells[6].Text.Length - 6) + "_" + txtlot.Text;
+                                confirmDate = DateTime.Now.AddHours(-2).ToString("yyyyMMdd HHmm");
+                                confirmUser = Request.QueryString["User"];
+                                dtlnum = item.Cells[5].Text;
+                                command = "statuschange";
+
+                                toStatus = "F";
+
+                                DataAdapterRP dataobj = new DataAdapterRP();
+                                string jsonresponse = dataobj.processStatusChange(url, userName, password, command, wh_id, po, confirmDate, confirmUser, dtlnum, toStatus);
+                            }
+                            else
+                            {
+                                lblError.Text = statu + " Bu statüdeki bir ürün onaylanamaz!";
+                            }
                         }
-                       
-                        DataAdapterRP dataobj = new DataAdapterRP();
-                        string jsonresponse = dataobj.processStatusChange(url, userName, password, command, wh_id, po, confirmDate, confirmUser, dtlnum, toStatus);                        
-                        
+                        else
+                        {
+                            po = item.Cells[6].Text.Replace("&nbsp;", "").Substring(item.Cells[6].Text.Length - 6) + "_" + txtlot.Text;
+                            confirmDate = DateTime.Now.AddHours(-2).ToString("yyyyMMdd HHmm");
+                            confirmUser = Request.QueryString["User"];
+                            dtlnum = item.Cells[5].Text;
+                            command = "statuschange";
+
+                            toStatus = "Q";
+
+                            DataAdapterRP dataobj = new DataAdapterRP();
+                            string jsonresponse = dataobj.processStatusChange(url, userName, password, command, wh_id, po, confirmDate, confirmUser, dtlnum, toStatus);
+                        }                                     
                     }
                 }
             }
@@ -575,7 +597,10 @@ namespace BasitPortal
                         {
                             toStatus = "Q";
                         }
-
+                        else if (wh_id=="LSH1")
+                        {
+                            toStatus = "H02";
+                        }
                         DataAdapterRP dataobj = new DataAdapterRP();
                         string jsonresponse = dataobj.processStatusChange(url, userName, password, command, wh_id, po, confirmDate, confirmUser, dtlnum, toStatus);
                     }
@@ -585,6 +610,51 @@ namespace BasitPortal
             totalQantity = 0;
             lblQantity.Text = "Toplam Miktar: " + totalQantity.ToString();
         }
+        public void barcodeStatusChangeRP()
+        {
+            string po = string.Empty;
+            string confirmDate = string.Empty;
+            string confirmUser = string.Empty;
+            string toStatus = string.Empty;
+            string dtlnum = string.Empty;
+            string command = string.Empty;
+
+            foreach (GridViewRow item in gvInventory.Rows)
+            {
+                CheckBox chk = (CheckBox)item.FindControl("CheckBox1");
+                if (chk != null)
+                {
+                    if (chk.Checked)
+                    {
+                        string statu = item.Cells[7].Text;
+                        if (statu== "Q-010R")
+                        {
+                            toStatus = "010F";
+                        }
+                        else if (statu == "Q-010F")
+                        {
+                            toStatus = "010R";
+                        }
+                        else
+                        {
+                            lblError.Text = statu+" barkodlanamadı ya da barkod kaldırılamadı!";
+                        }
+                        
+                        dtlnum = item.Cells[5].Text;
+                        command = "barcodestatuschange";
+
+
+                        DataAdapterRP dataobj = new DataAdapterRP();
+                        string jsonresponse = dataobj.processBarcodeStatusChange(url, userName, password, command, wh_id, dtlnum, toStatus);
+
+                    }
+                }
+            }
+            lblError.Text = "Barkod statü değişimleri yapıldı.";
+            totalQantity = 0;
+            lblQantity.Text = "Toplam Miktar: " + totalQantity.ToString();
+        }
+       
 
         public void confirmInventory()
         {          
@@ -758,11 +828,11 @@ namespace BasitPortal
                 cdate.Visible = false;
                 if (wh_id == "BOE1")
                 {
-                    btnConfirm2.Visible = true;
+                    btnBarcode.Visible = true;
                 }
                 else
                 {
-                    btnConfirm2.Visible = false;
+                    btnBarcode.Visible = false;
                 }
             }
             else if (systype == "JDA" && !cbConfirmed.Checked)
@@ -773,11 +843,11 @@ namespace BasitPortal
                 cdate.Visible = false;
                 if (wh_id == "BOE1")
                 {
-                    btnConfirm2.Visible = true;
+                    btnBarcode.Visible = true;
                 }
                 else
                 {
-                    btnConfirm2.Visible = false;
+                    btnBarcode.Visible = false;
                 }
             }
             else
@@ -788,11 +858,11 @@ namespace BasitPortal
                 cdate.Visible = true;
                 if (wh_id == "BOE1")
                 {
-                    btnConfirm2.Visible = true;
+                    btnBarcode.Visible = true;
                 }
                 else
                 {
-                    btnConfirm2.Visible = false;
+                    btnBarcode.Visible = false;
                 }
             }
         }
@@ -843,50 +913,11 @@ namespace BasitPortal
             cbSelectAll.Checked = false;
             cbSelectAll.CheckedChanged += CheckBox1_CheckedChanged;
         }
-        protected void btnConfirm2_Click(object sender, EventArgs e)
+        protected void btnBarcode_Click(object sender, EventArgs e)
         {
-            if (btnConfirm.Text == "F Onayı Kaldır")
-            {
-                if (systype == "RP")
-                {
-                    unConfirmStatusRP();
-                    getRPConfirmedList();
-                }
-                else
-                {
-                    if (wh_id == "TR_0126_03")
-                    {
-                        deleteInventoryConfirmation();
-                    }
-                    else
-                    {
-                        unConfirmStatus();
-                    }
-                    getConfirmedList();
-                }
 
-            }
-            else
-            {
-                if (systype == "RP")
-                {
-                    confirmStatusRP();
-                    getRPList();
-                }
-                else
-                {
-                    if (wh_id == "TR_0126_03")
-                    {
+            barcodeStatusChangeRP();
 
-                        confirmInventory();
-                    }
-                    else
-                    {
-                        confirmStatus();
-                    }
-                    getList();
-                }
-            }
             cbSelectAll.Checked = false;
             cbSelectAll.CheckedChanged += CheckBox1_CheckedChanged;
         }

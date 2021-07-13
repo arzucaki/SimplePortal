@@ -200,6 +200,17 @@ namespace BasitPortal
             parameters = "\"confirm_num\": \"" + po + "\",\"date\": \"" + date + "\",\"user\":\"" + user + "\",\"dtlnum\": \"" + dtlnum + "\",\"tostatus\": \"" + tostatus + "\"";
             return makeRequest();
         }
+        public string processBarcodeStatusChange(string url, string userName, string password, string command, string wh_id, string dtlnum, string tostatus)
+        {//Genel sorgu gönderip JDA'den JSON veri çektiğimiz
+
+            this.url = url;
+            this.userName = userName;
+            this.password = password;
+            commandFileName = command;
+            this.wh_id = wh_id;
+            parameters = "\"dtlnum\": \"" + dtlnum + "\",\"tostatus\": \"" + tostatus + "\"";
+            return makeRequest();
+        }
     }
 
 }
